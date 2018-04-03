@@ -56,7 +56,7 @@ import org.telegram.messenger.MediaController;
 
 import org.telegram.messenger.MessagesController;
 import org.telegram.messenger.MessagesStorage;
-import org.telegram.messenger.NativeCrashManager;
+
 import org.telegram.messenger.NotificationCenter;
 import org.telegram.messenger.R;
 import org.telegram.messenger.SendMessagesHelper;
@@ -140,7 +140,7 @@ public class LaunchActivity extends Activity implements ActionBarLayout.ActionBa
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         ApplicationLoader.postInitApplication();
-        NativeCrashManager.handleDumpFiles(this);
+        //NativeCrashManager.handleDumpFiles(this);
         AndroidUtilities.checkDisplaySize(this, getResources().getConfiguration());
 
         if (!UserConfig.isClientActivated()) {
@@ -1656,7 +1656,7 @@ public class LaunchActivity extends Activity implements ActionBarLayout.ActionBa
 
         actionBarLayout.presentFragment(fragment, dialogsFragment != null, dialogsFragment == null, true);
         if (videoPath != null) {
-            fragment.openVideoEditor(videoPath, sendingText);
+            //fragment.openVideoEditor(videoPath, sendingText);
             sendingText = null;
         }
 
@@ -1852,7 +1852,7 @@ public class LaunchActivity extends Activity implements ActionBarLayout.ActionBa
             passcodeView.onPause();
         }
         ConnectionsManager.getInstance().setAppPaused(true, false);
-        AndroidUtilities.unregisterUpdates();
+        //AndroidUtilities.unregisterUpdates();
 
     }
 
@@ -1935,8 +1935,8 @@ public class LaunchActivity extends Activity implements ActionBarLayout.ActionBa
             }
             passcodeView.onResume();
         }
-        AndroidUtilities.checkForCrashes(this);
-        AndroidUtilities.checkForUpdates(this);
+        //AndroidUtilities.checkForCrashes(this);
+        //AndroidUtilities.checkForUpdates(this);
         ConnectionsManager.getInstance().setAppPaused(false, false);
         updateCurrentConnectionState();
 

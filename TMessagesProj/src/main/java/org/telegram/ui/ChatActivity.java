@@ -39,6 +39,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.provider.MediaStore;
+import android.support.annotation.RequiresApi;
 import android.support.v4.content.FileProvider;
 import android.text.Spannable;
 import android.text.SpannableString;
@@ -1123,14 +1124,14 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
                     if (searchingForUser) {
                         mentionsAdapter.searchUsernameOrHashtag("@" + editText.getText().toString(), 0, messages, true);
                     } else if (!searchingForUser && searchingUserMessages == null && searchUserButton != null && TextUtils.equals(editText.getText(), LocaleController.getString("SearchFrom", R.string.SearchFrom))) {
-                        searchUserButton.callOnClick();
+                        searchClicked();
                     }
                 }
 
                 @Override
                 public void onCaptionCleared() {
                     if (searchingUserMessages != null) {
-                        searchUserButton.callOnClick();
+                        searchClicked();
                     } else {
                         if (searchingForUser) {
                             mentionsAdapter.searchUsernameOrHashtag(null, 0, null, false);
@@ -3242,16 +3243,7 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
             searchUserButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    mentionLayoutManager.setReverseLayout(true);
-                    mentionsAdapter.setSearchingMentions(true);
-                    searchCalendarButton.setVisibility(View.GONE);
-                    searchUserButton.setVisibility(View.GONE);
-                    searchingForUser = true;
-                    searchingUserMessages = null;
-                    searchItem.getSearchField().setHint(LocaleController.getString("SearchMembers", R.string.SearchMembers));
-                    searchItem.setSearchFieldCaption(LocaleController.getString("SearchFrom", R.string.SearchFrom));
-                    AndroidUtilities.showKeyboard(searchItem.getSearchField());
-                    searchItem.clearSearchText();
+                   searchClicked();
                 }
             });
         }
@@ -5449,21 +5441,6 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
         }
     }
 
-    public void openVideoEditor(String videoPath, String caption) {
-        if (getParentActivity() != null) {
-            final Bitmap thumb = ThumbnailUtils.createVideoThumbnail(videoPath, MediaStore.Video.Thumbnails.MINI_KIND);
-
-            final ArrayList<Object> cameraPhoto = new ArrayList<>();
-            MediaController.PhotoEntry entry = new MediaController.PhotoEntry(0, 0, 0, videoPath, 0, true);
-            entry.caption = caption;
-            cameraPhoto.add(entry);
-
-        } else {
-            SendMessagesHelper.prepareSendingVideo(videoPath, 0, 0, 0, 0, null, dialog_id, replyingMessageObject, null, 0);
-            showReplyPanel(false, null, null, null, false);
-            DraftQuery.cleanDraft(dialog_id, true);
-        }
-    }
 
     private void showAttachmentError() {
         if (getParentActivity() == null) {
@@ -5504,12 +5481,13 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
         SendMessagesHelper.prepareSendingDocument(tempPath, originalPath, null, null, dialog_id, replyingMessageObject, null);
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
     @Override
     public void onActivityResultFragment(int requestCode, int resultCode, Intent data) {
         if (resultCode == Activity.RESULT_OK) {
             if (requestCode == 0) {
 
-                final ArrayList<Object> arrayList = new ArrayList<>();
+                /*final ArrayList<Object> arrayList = new ArrayList<>();
                 int orientation = 0;
                 try {
                     ExifInterface ei = new ExifInterface(currentPicturePath);
@@ -5531,7 +5509,7 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
                 arrayList.add(new MediaController.PhotoEntry(0, 0, 0, currentPicturePath, orientation, false));
 
 
-                AndroidUtilities.addMediaToGallery(currentPicturePath);
+                AndroidUtilities.addMediaToGallery(currentPicturePath);*/
                 currentPicturePath = null;
             } else if (requestCode == 1) {
                 if (data == null || data.getData() == null) {
@@ -5552,7 +5530,7 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
                     if (paused) {
                         startVideoEdit = videoPath;
                     } else {
-                        openVideoEditor(videoPath, null);
+                        //openVideoEditor(videoPath, null);
                     }
                 } else {
                     SendMessagesHelper.prepareSendingPhoto(null, uri, dialog_id, replyingMessageObject, null, null, null, 0);
@@ -5592,7 +5570,7 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
                 if (paused) {
                     startVideoEdit = videoPath;
                 } else {
-                    openVideoEditor(videoPath, null);
+                    //openVideoEditor(videoPath, null);
                 }
             } else if (requestCode == 21) {
                 if (data == null) {
@@ -5675,9 +5653,7 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
         }
     }
 
-    public boolean processSendingText(String text) {
-        return chatActivityEnterView.processSendingText(text);
-    }
+
 
     @Override
     public void didReceivedNotification(int id, final Object... args) {
@@ -8404,7 +8380,7 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
             AndroidUtilities.runOnUIThread(new Runnable() {
                 @Override
                 public void run() {
-                    openVideoEditor(startVideoEdit, null);
+                    //openVideoEditor(startVideoEdit, null);
                     startVideoEdit = null;
                 }
             });
@@ -10001,9 +9977,7 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
         return currentChat;
     }
 
-    public boolean allowGroupPhotos() {
-        return currentEncryptedChat == null || AndroidUtilities.getPeerLayerVersion(currentEncryptedChat.layer) >= 73;
-    }
+
 
     public TLRPC.EncryptedChat getCurrentEncryptedChat() {
         return currentEncryptedChat;
@@ -10013,27 +9987,7 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
         return info;
     }
 
-    public void sendMedia(MediaController.PhotoEntry photoEntry, VideoEditedInfo videoEditedInfo) {
-        if (photoEntry.isVideo) {
-            if (videoEditedInfo != null) {
-                SendMessagesHelper.prepareSendingVideo(photoEntry.path, videoEditedInfo.estimatedSize, videoEditedInfo.estimatedDuration, videoEditedInfo.resultWidth, videoEditedInfo.resultHeight, videoEditedInfo, dialog_id, replyingMessageObject, photoEntry.caption != null ? photoEntry.caption.toString() : null, photoEntry.ttl);
-            } else {
-                SendMessagesHelper.prepareSendingVideo(photoEntry.path, 0, 0, 0, 0, null, dialog_id, replyingMessageObject, photoEntry.caption != null ? photoEntry.caption.toString() : null, photoEntry.ttl);
-            }
-            showReplyPanel(false, null, null, null, false);
-            DraftQuery.cleanDraft(dialog_id, true);
-        } else {
-            if (photoEntry.imagePath != null) {
-                SendMessagesHelper.prepareSendingPhoto(photoEntry.imagePath, null, dialog_id, replyingMessageObject, photoEntry.caption, photoEntry.stickers, null, photoEntry.ttl);
-                showReplyPanel(false, null, null, null, false);
-                DraftQuery.cleanDraft(dialog_id, true);
-            } else if (photoEntry.path != null) {
-                SendMessagesHelper.prepareSendingPhoto(photoEntry.path, null, dialog_id, replyingMessageObject, photoEntry.caption, photoEntry.stickers, null, photoEntry.ttl);
-                showReplyPanel(false, null, null, null, false);
-                DraftQuery.cleanDraft(dialog_id, true);
-            }
-        }
-    }
+
 
     public void showOpenGameAlert(final TLRPC.TL_game game, final MessageObject messageObject, final String urlStr, boolean ask, final int uid) {
         TLRPC.User user = MessagesController.getInstance().getUser(uid);
@@ -11236,5 +11190,18 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
                 new ThemeDescription(avatarContainer.getTimeItem(), 0, null, null, null, null, Theme.key_chat_secretTimerBackground),
                 new ThemeDescription(avatarContainer.getTimeItem(), 0, null, null, null, null, Theme.key_chat_secretTimerText),
         };
+    }
+    
+    private void searchClicked(){
+        mentionLayoutManager.setReverseLayout(true);
+        mentionsAdapter.setSearchingMentions(true);
+        searchCalendarButton.setVisibility(View.GONE);
+        searchUserButton.setVisibility(View.GONE);
+        searchingForUser = true;
+        searchingUserMessages = null;
+        searchItem.getSearchField().setHint(LocaleController.getString("SearchMembers", R.string.SearchMembers));
+        searchItem.setSearchFieldCaption(LocaleController.getString("SearchFrom", R.string.SearchFrom));
+        AndroidUtilities.showKeyboard(searchItem.getSearchField());
+        searchItem.clearSearchText();
     }
 }

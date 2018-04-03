@@ -1928,7 +1928,7 @@ public class NotificationsController {
                     mBuilder.addAction(R.drawable.ic_ab_reply, LocaleController.getString("Reply", R.string.Reply), PendingIntent.getBroadcast(ApplicationLoader.applicationContext, 2, replyIntent, PendingIntent.FLAG_UPDATE_CURRENT));
                 }
             }
-            showExtraNotifications(mBuilder, notifyAboutLast);
+           // showExtraNotifications(mBuilder, notifyAboutLast);
             notificationManager.notify(1, mBuilder.build());
 
             scheduleNotificationRepeat();
@@ -1936,7 +1936,7 @@ public class NotificationsController {
             FileLog.e(e);
         }
     }
-
+/*
     @SuppressLint("InlinedApi")
     private void showExtraNotifications(NotificationCompat.Builder notificationBuilder, boolean notifyAboutLast) {
         if (Build.VERSION.SDK_INT < 18) {
@@ -2155,7 +2155,7 @@ public class NotificationsController {
             notificationManager.cancel(entry.getValue());
         }
     }
-
+  */
     public void playOutChatSound() {
         if (!inChatSoundEnabled) {
             return;

@@ -14,6 +14,7 @@ import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.Application;
 import android.content.ComponentName;
 import android.content.ContentUris;
 import android.content.Context;
@@ -50,6 +51,7 @@ import android.os.Handler;
 import android.provider.CallLog;
 import android.provider.DocumentsContract;
 import android.provider.MediaStore;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.FileProvider;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.EdgeEffectCompat;
@@ -74,9 +76,6 @@ import android.widget.ScrollView;
 
 import com.android.internal.telephony.ITelephony;
 
-import net.hockeyapp.android.CrashManager;
-import net.hockeyapp.android.CrashManagerListener;
-import net.hockeyapp.android.UpdateManager;
 
 import org.telegram.PhoneFormat.PhoneFormat;
 import org.telegram.tgnet.ConnectionsManager;
@@ -137,6 +136,7 @@ public class AndroidUtilities {
     private static RectF bitmapRect;
 
     public static Pattern WEB_URL = null;
+
     static {
         try {
             final String GOOD_IRI_CHAR = "a-zA-Z0-9\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF";
@@ -552,7 +552,7 @@ public class AndroidUtilities {
     }
 
     public static long makeBroadcastId(int id) {
-        return 0x0000000100000000L | ((long)id & 0x00000000FFFFFFFFL);
+        return 0x0000000100000000L | ((long) id & 0x00000000FFFFFFFFL);
     }
 
     public static int getMyLayerVersion(int layer) {
@@ -765,6 +765,16 @@ public class AndroidUtilities {
         }
         Cursor cursor = null;
         try {
+            if (ActivityCompat.checkSelfPermission(ApplicationLoader.applicationContext, android.Manifest.permission.READ_CALL_LOG) != PackageManager.PERMISSION_GRANTED) {
+                // TODO: Consider calling
+                //    ActivityCompat#requestPermissions
+                // here to request the missing permissions, and then overriding
+                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                //                                          int[] grantResults)
+                // to handle the case where the user grants the permission. See the documentation
+                // for ActivityCompat#requestPermissions for more details.
+                return;
+            }
             cursor = ApplicationLoader.applicationContext.getContentResolver().query(
                     CallLog.Calls.CONTENT_URI,
                     new String[]{CallLog.Calls._ID, CallLog.Calls.NUMBER},
@@ -1292,26 +1302,8 @@ public class AndroidUtilities {
         }
     }*/
 
-    public static void checkForCrashes(Activity context) {
-        CrashManager.register(context, BuildVars.DEBUG_VERSION ? BuildVars.HOCKEY_APP_HASH_DEBUG : BuildVars.HOCKEY_APP_HASH, new CrashManagerListener() {
-            @Override
-            public boolean includeDeviceData() {
-                return true;
-            }
-        });
-    }
 
-    public static void checkForUpdates(Activity context) {
-        if (BuildVars.DEBUG_VERSION) {
-            UpdateManager.register(context, BuildVars.DEBUG_VERSION ? BuildVars.HOCKEY_APP_HASH_DEBUG : BuildVars.HOCKEY_APP_HASH);
-        }
-    }
 
-    public static void unregisterUpdates() {
-        if (BuildVars.DEBUG_VERSION) {
-            UpdateManager.unregister();
-        }
-    }
 
     public static void addToClipboard(CharSequence str) {
         try {
@@ -1720,15 +1712,7 @@ public class AndroidUtilities {
                     Intent share = new Intent(ApplicationLoader.applicationContext, ShareBroadcastReceiver.class);
                     share.setAction(Intent.ACTION_SEND);
 
-                    /*PendingIntent copy = PendingIntent.getBroadcast(ApplicationLoader.applicationContext, 0, new Intent(ApplicationLoader.applicationContext, CustomTabsCopyReceiver.class), PendingIntent.FLAG_UPDATE_CURRENT);
 
-                    CustomTabsIntent.Builder builder = new CustomTabsIntent.Builder(getSession());
-                    builder.addMenuItem(LocaleController.getString("CopyLink", R.string.CopyLink), copy);
-                    builder.setToolbarColor(Theme.getColor(Theme.key_actionBarDefault));
-                    builder.setShowTitle(true);
-                    builder.setActionButton(BitmapFactory.decodeResource(context.getResources(), R.drawable.abc_ic_menu_share_mtrl_alpha), LocaleController.getString("ShareFile", R.string.ShareFile), PendingIntent.getBroadcast(ApplicationLoader.applicationContext, 0, share, 0), false);
-                    CustomTabsIntent intent = builder.build();
-                    intent.launchUrl(context, uri);*/
                     return;
                 }
             }

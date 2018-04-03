@@ -636,7 +636,7 @@ public class MessageObject {
                     if (isOut()) {
                         messageText = LocaleController.getString("ActionInviteYou", R.string.ActionInviteYou);
                     } else {
-                        messageText = replaceWithLink(LocaleController.getString("ActionInviteUser", R.string.ActionInviteUser), "un1", fromUser);
+                        messageText = replaceWithLink("Invite User", "un1", fromUser);
                     }
                 } else if (message.action instanceof TLRPC.TL_messageActionChatEditPhoto) {
                     if (message.to_id.channel_id != 0 && !isMegagroup()) {

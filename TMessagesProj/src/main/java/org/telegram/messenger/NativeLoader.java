@@ -12,8 +12,6 @@ import android.content.Context;
 import android.content.pm.ApplicationInfo;
 import android.os.Build;
 
-import net.hockeyapp.android.Constants;
-
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;

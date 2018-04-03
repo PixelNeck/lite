@@ -12,17 +12,10 @@ configurations {
 
 dependencies {
     implementation 'com.google.android.gms:play-services-gcm:12.0.1'
-    implementation 'com.google.android.gms:play-services-maps:12.0.1'
-    implementation 'com.google.android.gms:play-services-vision:12.0.1'
-    implementation 'com.google.android.gms:play-services-wallet:12.0.1'
-    implementation 'com.google.android.gms:play-services-wearable:12.0.1'
     implementation 'com.google.android.gms:play-services-ads:12.0.1'
     implementation 'com.android.support:support-core-ui:25.4.0'
-    implementation 'com.android.support:support-compat:25.4.0'
     implementation 'com.android.support:support-core-utils:25.4.0'
     implementation 'com.android.support:support-v13:25.4.0'
-    implementation 'com.android.support:palette-v7:25.4.0'
-    implementation 'net.hockeyapp.android:HockeySDK:4.1.3'
     implementation 'com.googlecode.mp4parser:isoparser:1.0.6'
     compile 'com.stripe:stripe-android:2.0.2'
     implementation 'com.android.support:multidex:1.0.3'
@@ -64,23 +57,11 @@ android {
 
     signingConfigs {
         debug {
-            //storeFile file("config/release.keystore.jks")
-            //storeFile file("config/release.keystore")
-            //storePassword "1h111trekk1"
-            //keyAlias "key0"
-            //keyPassword "1h111trekk1"
             v2SigningEnabled false
         }
         release {
-            //storeFile file("config/release.keystore.jks")
-            //storePassword "1h111trekk1"
-            //keyAlias "key0"
-            //keyPassword "1h111trekk1"
             v2SigningEnabled false
-            keyAlias 'key0'
-            keyPassword '1h111trekk1'
             storeFile file('/home/elanimus/Desktop/plus-messenger-master-1d96151861d0db96ffe384807621a0a3a2d371c8/TMessagesProj/config/release.keystore.jks')
-            storePassword '1h111trekk1'
         }
     }
 
@@ -114,7 +95,7 @@ android {
 
     defaultConfig.versionCode = 2
 
-    defaultConfig.manifestPlaceholders = [HOCKEYAPP_APP_ID: "0bf574d05ea448cea56617c5fcb9a6b3"]
+    //defaultConfig.manifestPlaceholders = [HOCKEYAPP_APP_ID: "0bf574d05ea448cea56617c5fcb9a6b3"]
 
     sourceSets.debug {
         manifest.srcFile 'config/debug/AndroidManifest.xml'
@@ -142,7 +123,7 @@ android {
             ndk {
                 abiFilter "x86"
             }
-            versionCode = 7
+            versionCode = 8
             applicationId 'telegram.messenger.fast.lite'
         }
 
@@ -151,7 +132,7 @@ android {
             ndk {
                 abiFilter "armeabi-v7a"
             }
-            versionCode = 8
+            versionCode = 9
             applicationId 'telegram.messenger.fast.lite'
         }
         x86_SDK23 {
@@ -203,7 +184,7 @@ android {
     }
 
     defaultConfig {
-        minSdkVersion 16
+        minSdkVersion 14
         targetSdkVersion 27
         versionName "4.6.7"
         /* externalNativeBuild {
